@@ -1,0 +1,20 @@
+{% extends 'CalorieCounter/base.html' %}
+{% block title %}My Profile - Calorie Counter{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 520px; margin: 0 auto;">
+    <h2>My Profile</h2>
+    <p class="muted">These details are used to estimate your daily calorie needs (BMR &amp; TDEE).</p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+            <p>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            </p>
+        {% endfor %}
+        <button type="submit">Save Profile</button>
+        <a href="{% url 'CalorieCounter:dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

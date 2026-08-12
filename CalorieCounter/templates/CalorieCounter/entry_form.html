@@ -1,0 +1,19 @@
+{% extends 'CalorieCounter/base.html' %}
+{% block title %}{% if form.instance.pk %}Edit Entry{% else %}Log Food{% endif %} - Calorie Counter{% endblock %}
+{% block content %}
+<div class="card" style="max-width: 480px; margin: 0 auto;">
+    <h2>{% if form.instance.pk %}Edit Food Entry{% else %}Log Consumed Food{% endif %}</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+            <p>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {{ field.errors }}
+            </p>
+        {% endfor %}
+        <button type="submit">{% if form.instance.pk %}Save Changes{% else %}Add Entry{% endif %}</button>
+        <a href="{% url 'CalorieCounter:dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

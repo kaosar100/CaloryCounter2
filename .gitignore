@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+
+# Migrations (uncomment ONLY if your team regenerates them per-environment;
+# normally you SHOULD commit migrations, so leave this commented out)
+# */migrations/*.py
+# !*/migrations/__init__.py
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment variables / secrets
+.env
+.env.*
+*.pem
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE / editor
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Static files collected via collectstatic (safe to include even though
+# this project doesn't use a static/ dir, in case you add one later)
+staticfiles/

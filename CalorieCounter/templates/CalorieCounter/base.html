@@ -1,0 +1,219 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Calorie Counter{% endblock %}</title>
+    <style>
+        :root {
+            --green: #2f9e44;
+            --green-dark: #206b2e;
+            --orange: #f08c00;
+            --bg: #f4f8f4;
+            --card-bg: #ffffff;
+            --text: #24303a;
+            --muted: #6b7c85;
+            --border: #dde5df;
+            --danger: #e03131;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        header.topbar {
+            background: linear-gradient(135deg, var(--green), var(--green-dark));
+            color: #fff;
+            padding: 16px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+        }
+
+        header.topbar .brand {
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        header.topbar .brand span {
+            color: #ffe08a;
+        }
+
+        nav.topnav a {
+            color: #eafbea;
+            text-decoration: none;
+            margin-left: 18px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        nav.topnav a:hover { text-decoration: underline; }
+
+        .container {
+            max-width: 960px;
+            margin: 32px auto;
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 22px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.15rem;
+            color: var(--green-dark);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 8px;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .stat-box {
+            background: #f0f9f0;
+            border: 1px solid #d7ead9;
+            border-radius: 8px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-box .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .stat-box.warning .value { color: var(--orange); }
+        .stat-box.danger .value { color: var(--danger); }
+
+        .stat-box .label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        form p { margin: 12px 0; }
+        label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.92rem; }
+
+        input, select {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background: #fff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(47,158,68,0.15);
+        }
+
+        button, .btn {
+            display: inline-block;
+            background: var(--green);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 6px;
+        }
+
+        button:hover, .btn:hover { background: var(--green-dark); }
+
+        .btn-secondary { background: #6b7c85; }
+        .btn-secondary:hover { background: #4f5c63; }
+
+        .btn-danger { background: var(--danger); padding: 6px 12px; font-size: 0.82rem; }
+        .btn-danger:hover { background: #b52323; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.92rem;
+        }
+
+        th { color: var(--muted); text-transform: uppercase; font-size: 0.75rem; }
+
+        .errorlist { color: var(--danger); list-style: none; padding: 0; margin: 4px 0; font-size: 0.85rem; }
+
+        .messages { list-style: none; padding: 0; margin: 0 0 18px 0; }
+        .messages li {
+            padding: 10px 14px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            background: #eafbea;
+            border: 1px solid #b7e4b9;
+            color: var(--green-dark);
+        }
+
+        .auth-box {
+            max-width: 400px;
+            margin: 60px auto;
+        }
+
+        .muted { color: var(--muted); font-size: 0.88rem; }
+        .center { text-align: center; }
+        .empty { color: var(--muted); font-style: italic; padding: 10px 0; }
+    </style>
+</head>
+<body>
+    <header class="topbar">
+        <div class="brand">Calorie<span>Counter</span></div>
+        <nav class="topnav">
+            {% if user.is_authenticated %}
+                <a href="{% url 'CalorieCounter:dashboard' %}">Dashboard</a>
+                <a href="{% url 'CalorieCounter:profile' %}">My Profile</a>
+                <a href="{% url 'CalorieCounter:entry_add' %}">Log Food</a>
+                <a href="{% url 'CalorieCounter:logout' %}">Logout ({{ user.username }})</a>
+            {% else %}
+                <a href="{% url 'CalorieCounter:login' %}">Login</a>
+                <a href="{% url 'CalorieCounter:register' %}">Register</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div class="container">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>

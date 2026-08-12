@@ -1,0 +1,86 @@
+{% extends 'CalorieCounter/base.html' %}
+{% block title %}Dashboard - Calorie Counter{% endblock %}
+{% block content %}
+
+<div class="card">
+    <h2>Welcome, {{ profile.name|default:user.username }}</h2>
+
+    {% if not profile %}
+        <p class="empty">You haven't set up your profile yet.</p>
+        <a href="{% url 'CalorieCounter:profile' %}" class="btn">Set Up Profile</a>
+    {% else %}
+        <div class="stat-grid">
+            <div class="stat-box">
+                <div class="value">{{ bmr }}</div>
+                <div class="label">BMR (kcal)</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">{{ tdee }}</div>
+                <div class="label">Maintenance TDEE</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">{{ required_calories }}</div>
+                <div class="label">Daily Target ({{ profile.get_goal_display }})</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">{{ consumed_today }}</div>
+                <div class="label">Consumed Today</div>
+            </div>
+            <div class="stat-box {% if remaining_calories < 0 %}danger{% elif remaining_calories < 200 %}warning{% endif %}">
+                <div class="value">{{ remaining_calories }}</div>
+                <div class="label">Remaining Today</div>
+            </div>
+        </div>
+        <p class="muted" style="margin-top:14px;">
+            <a href="{% url 'CalorieCounter:profile' %}">Edit profile</a> &middot;
+            Goal: {{ profile.get_goal_display }} &middot;
+            Activity: {{ profile.get_activity_level_display }}
+        </p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h2>Today's Log ({{ today }})</h2>
+    {% if todays_entries %}
+        <table>
+            <tr><th>Item</th><th>Calories</th><th></th></tr>
+            {% for entry in todays_entries %}
+            <tr>
+                <td>{{ entry.item_name }}</td>
+                <td>{{ entry.calories }}</td>
+                <td>
+                    <a href="{% url 'CalorieCounter:entry_edit' entry.pk %}" class="btn btn-secondary"
+                        style="padding:6px 12px; font-size:0.82rem;">Edit</a>
+                    <form method="post" action="{% url 'CalorieCounter:entry_delete' entry.pk %}" style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="empty">No items logged today yet.</p>
+    {% endif %}
+    <a href="{% url 'CalorieCounter:entry_add' %}" class="btn">+ Log Food</a>
+</div>
+
+<div class="card">
+    <h2>Recent Entries</h2>
+    {% if recent_entries %}
+        <table>
+            <tr><th>Date</th><th>Item</th><th>Calories</th></tr>
+            {% for entry in recent_entries %}
+            <tr>
+                <td>{{ entry.date }}</td>
+                <td>{{ entry.item_name }}</td>
+                <td>{{ entry.calories }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p class="empty">No entries logged yet.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

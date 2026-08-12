@@ -1,0 +1,27 @@
+{% extends 'CalorieCounter/base.html' %}
+{% block title %}Login - Calorie Counter{% endblock %}
+{% block content %}
+<div class="auth-box card">
+    <h2>Login</h2>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+            <ul class="errorlist">
+                {% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+            </ul>
+        {% endif %}
+        <p>
+            <label for="{{ form.username.id_for_label }}">Username or Email</label>
+            {{ form.username }}
+            {{ form.username.errors }}
+        </p>
+        <p>
+            <label for="{{ form.password.id_for_label }}">Password</label>
+            {{ form.password }}
+            {{ form.password.errors }}
+        </p>
+        <button type="submit">Log In</button>
+    </form>
+    <p class="muted">Don't have an account? <a href="{% url 'CalorieCounter:register' %}">Register here</a>.</p>
+</div>
+{% endblock %}
